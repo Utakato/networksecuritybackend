@@ -1,19 +1,16 @@
 # docker-compose.yml
-version: "3.8"
-
 services:
-  postgres:
-    image: postgres:15
-    container_name: validator-postgres
-    restart: always
+  timescaledb:
+    image: timescale/timescaledb-ha:pg17
+    container_name: timescale-validator
+    ports:
+      - "5433:5432"
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: validator_security
-    ports:
-      - "5432:5432"
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: validator_timescale
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - timescale-data:/var/lib/postgresql/data
 
 volumes:
-  postgres-data:
+  timescale-data:

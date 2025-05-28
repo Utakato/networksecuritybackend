@@ -1,0 +1,1 @@
+python3 ./ports_service/main.py
