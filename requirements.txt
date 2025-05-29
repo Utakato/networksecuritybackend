@@ -2,10 +2,23 @@
 psycopg2-binary>=2.9.9
 python-dotenv>=1.0.0
 
-
 # Data processing
 pandas>=2.1.1
 numpy>=1.26.0
 
-# Nmap
-python3-nmap
+# Network scanning
+python3-nmap>=1.5.4
+nmap3>=1.5.1
+
+# Concurrency and threading (built-in modules, no additional packages needed)
+# - concurrent.futures (built-in)
+# - threading (built-in)
+
+# Standard library modules (no additional packages needed)
+# - json (built-in)
+# - os (built-in)
+# - sys (built-in)
+# - datetime (built-in)
+# - typing (built-in)
+# - time (built-in)
+# - argparse (built-in)
