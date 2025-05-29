@@ -36,7 +36,6 @@ def get_all_ip_addresses():
             # Get the most recent entry for each identity_key
             # This ensures each validator identity is tracked separately
  
-            
             cur.execute(GET_ALL_IP_ADDRESSES_QUERY)
             results = cur.fetchall()
             

@@ -5,20 +5,24 @@
 3. Fetch data from validators
 4. store updated data in a database
 
-## TODO:
-
-### Python:
-
 5. For each validator fetch more data from the api?? based on pub key?
 6. Check open ports for each validator -> nmap or something similar
+   Probably we'll split this whole thing into "modules" or "services"
+   The module or service should be able to run independently and should be able to update the DB.
+   We should have a script for each one of these and they should also update the DB.
+   Therefore each db interaction will be scoped to the module or service.
+   create script to run ports service
 
-We should have a script for each one of these and they should also update the DB.
+## TODO:
 
-Probably we'll split this whole thing into "modules" or "services"
+Deploy.
 
-The module or service should be able to run independently and should be able to update the DB.
+Go to next.js - you have convo with chatgpt to do this
 
-Therefore each db interaction will be scoped to the module or service.
+Later - after initial deploys
+-vulnerability script
+
+### Python:
 
 ### Next.js:
 
