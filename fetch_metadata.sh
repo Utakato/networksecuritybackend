@@ -1,0 +1,1 @@
+solana validator-info get --output json > data/validator_info.json

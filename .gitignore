@@ -1,7 +1,7 @@
 **/__pycache__
 venv
 
+**/**.json
+**/*.json
 
-data/validators_data.json
-gossip_service/gossip_data.json
-
+data
