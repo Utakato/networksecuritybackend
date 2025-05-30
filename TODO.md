@@ -13,11 +13,9 @@
    Therefore each db interaction will be scoped to the module or service.
    create script to run ports service
 
-## TODO:
-
 Deploy.
 
-Go to next.js - you have convo with chatgpt to do this
+## TODO:
 
 Later - after initial deploys
 -vulnerability script
@@ -33,4 +31,4 @@ Later - after initial deploys
 
 ## NOTES:
 
-Pubkey is the primary key for the database.
+vote key is the primary key for the database.

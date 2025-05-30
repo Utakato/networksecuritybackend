@@ -29,10 +29,13 @@ CREATE_IP_OPEN_PORTS_TABLE = """
     ON ip_open_ports (ip_address, identity_key, timestamp DESC);
 """
 
-# SQL query for inserting open ports data into TimescaleDB (simplified without conflict resolution)
+# SQL query for inserting open ports data into TimescaleDB (with conflict resolution)
 INSERT_OPEN_PORTS_QUERY = """
     INSERT INTO ip_open_ports (ip_address, identity_key, protocol, port, service, timestamp)
     VALUES %s
+    ON CONFLICT (ip_address, port, protocol, timestamp) DO UPDATE SET
+        identity_key = EXCLUDED.identity_key,
+        service = EXCLUDED.service
 """
 
 def create_ip_open_ports_table(conn):
@@ -80,7 +83,7 @@ def save_open_ports_to_db(open_ports, identity_key, ip_address, conn=None, clean
             return 0
         
         # Use current timestamp for all ports in this scan
-        scan_timestamp = datetime.now().replace(second=0, microsecond=0)
+        scan_timestamp = datetime.now()
         
         # Optionally clean old entries for this IP and identity key from today
         if clean_old:
@@ -152,7 +155,7 @@ def save_multiple_hosts_ports(hosts_ports_data, conn=None, clean_old=True):
         create_ip_open_ports_table(conn)
         
         total_saved = 0
-        scan_timestamp = datetime.now().replace(second=0, microsecond=0)
+        scan_timestamp = datetime.now()
         
         # Optionally clean old entries for all IPs from today
         if clean_old:
