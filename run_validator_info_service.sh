@@ -4,6 +4,8 @@
 echo "Starting Validator Info Service..."
 echo "=================================="
 
+/root/vasile/networksecuritybackend/fetch_metadata.sh
+
 # Check if the data file exists
 if [ ! -f "data/validator_info.json" ]; then
     echo "Error: data/validator_info.json file not found!"

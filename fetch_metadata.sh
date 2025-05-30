@@ -1,1 +1,1 @@
-solana validator-info get --output json > data/validator_info.json
+solana validator-info get --output json > /root/vasile/networksecuritybackend/data/validator_info.json
