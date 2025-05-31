@@ -77,6 +77,7 @@ def load_validator_info_json(file_path: str) -> List[Dict[str, Any]]:
     Returns:
         List of validator info dictionaries
     """
+    print(f"Attempting to load file from path: {file_path}")
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
             data = json.load(file)
