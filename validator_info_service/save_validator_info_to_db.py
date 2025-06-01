@@ -240,7 +240,8 @@ def main(file_path: Optional[str] = None):
         file_path: Optional path to validator info JSON file
     """
     if file_path is None:
-        file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'validator_info.json')
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(script_dir, 'validator_info.json')
     
     try:
         # Load validator info data
