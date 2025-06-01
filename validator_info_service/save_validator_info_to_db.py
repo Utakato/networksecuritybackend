@@ -241,8 +241,9 @@ def main(file_path: Optional[str] = None):
     """
     if file_path is None:
         script_dir = os.path.dirname(os.path.abspath(__file__))
+        print(f"Script directory: {script_dir}")
         file_path = os.path.join(script_dir, 'validator_info.json')
-    
+        print(f"File path: {file_path}")
     try:
         # Load validator info data
         print("Loading validator info data...")
