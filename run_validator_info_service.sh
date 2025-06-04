@@ -7,6 +7,6 @@ echo "=================================="
 /root/vasile/networksecuritybackend/fetch_metadata.sh
 
 # Run the validator info service
-python3 /root/vasile/networksecuritybackend/validator_info_service/main.py
+python3 /root/vasile/networksecuritybackend/metadata_service/main.py
 
 echo "Validator Info Service completed!" 

@@ -10,32 +10,10 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 from db_service.connection import get_db_connection
 
-# SQL query to create ip_open_ports table if it doesn't exist
-CREATE_IP_OPEN_PORTS_TABLE = """
-    CREATE TABLE IF NOT EXISTS ip_open_ports (
-        ip_address VARCHAR(50) NOT NULL,
-        identity_key VARCHAR(44) NOT NULL,
-        protocol VARCHAR(10) NOT NULL,
-        port INTEGER NOT NULL,
-        service VARCHAR(100),
-        timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    );
-    
-    -- Create hypertable for TimescaleDB if not already created
-    SELECT create_hypertable('ip_open_ports', 'timestamp', if_not_exists => TRUE);
-    
-    -- Create index for efficient queries
-    CREATE INDEX IF NOT EXISTS idx_ip_open_ports_lookup 
-    ON ip_open_ports (ip_address, identity_key, timestamp DESC);
-"""
-
-# SQL query for inserting open ports data into TimescaleDB (with conflict resolution)
+# SQL query for inserting open ports data into TimescaleDB
 INSERT_OPEN_PORTS_QUERY = """
     INSERT INTO ip_open_ports (ip_address, identity_key, protocol, port, service, timestamp)
     VALUES %s
-    ON CONFLICT (ip_address, port, protocol, timestamp) DO UPDATE SET
-        identity_key = EXCLUDED.identity_key,
-        service = EXCLUDED.service
 """
 
 def create_ip_open_ports_table(conn):
@@ -47,12 +25,63 @@ def create_ip_open_ports_table(conn):
     """
     try:
         with conn.cursor() as cur:
-            cur.execute(CREATE_IP_OPEN_PORTS_TABLE)
-            conn.commit()
-            print("ip_open_ports table created/verified successfully")
+            # Create table first without unique constraint
+            create_table_query = """
+                CREATE TABLE IF NOT EXISTS ip_open_ports (
+                    ip_address VARCHAR(50) NOT NULL,
+                    identity_key VARCHAR(44) NOT NULL,
+                    protocol VARCHAR(10) NOT NULL,
+                    port INTEGER NOT NULL,
+                    service VARCHAR(100),
+                    timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                );
+            """
+            cur.execute(create_table_query)
+            conn.commit()  # Commit table creation first
+            
+        # Add unique constraint in separate transaction
+        try:
+            with conn.cursor() as cur:
+                add_constraint_query = """
+                    ALTER TABLE ip_open_ports 
+                    ADD CONSTRAINT ip_open_ports_unique 
+                    UNIQUE (ip_address, port, protocol, timestamp);
+                """
+                cur.execute(add_constraint_query)
+                conn.commit()
+        except Exception as constraint_error:
+            conn.rollback()  # Rollback failed constraint addition
+            # Constraint might already exist, that's fine
+            if "already exists" not in str(constraint_error):
+                print(f"Note: Could not add unique constraint: {constraint_error}")
+        
+        # Create hypertable for TimescaleDB in separate transaction
+        try:
+            with conn.cursor() as cur:
+                cur.execute("SELECT create_hypertable('ip_open_ports', 'timestamp', if_not_exists => TRUE);")
+                conn.commit()
+        except Exception as hypertable_error:
+            conn.rollback()  # Rollback failed hypertable creation
+            # Hypertable might already exist or TimescaleDB not available
+            print(f"Note: Hypertable setup: {hypertable_error}")
+        
+        # Create index in separate transaction
+        try:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    CREATE INDEX IF NOT EXISTS idx_ip_open_ports_lookup 
+                    ON ip_open_ports (ip_address, identity_key, timestamp DESC);
+                """)
+                conn.commit()
+                print("ip_open_ports table created/verified successfully")
+        except Exception as index_error:
+            conn.rollback()
+            print(f"Note: Index creation: {index_error}")
+            
     except Exception as e:
-        print(f"Note: Table creation/hypertable setup: {e}")
+        print(f"Error creating ip_open_ports table: {e}")
         conn.rollback()
+        raise
 
 def save_open_ports_to_db(open_ports, identity_key, ip_address, conn=None, clean_old=True):
     """
@@ -78,8 +107,8 @@ def save_open_ports_to_db(open_ports, identity_key, ip_address, conn=None, clean
         # Ensure table exists
         create_ip_open_ports_table(conn)
         
-        if not open_ports:
-            print(f"No open ports to save for {ip_address}")
+        if not open_ports or len(open_ports) == 0:
+            print(f"🔍 No open ports to save for {ip_address} (received {len(open_ports) if open_ports else 0} ports)")
             return 0
         
         # Use current timestamp for all ports in this scan
@@ -211,23 +240,3 @@ def save_multiple_hosts_ports(hosts_ports_data, conn=None, clean_old=True):
         if should_close_conn and conn:
             conn.close()
 
-def main():
-    """
-    Main function for testing the save_open_ports_to_db function
-    """
-    # Test data
-    test_open_ports = [
-        {"protocol": "tcp", "port": "22", "service": "ssh"},
-        {"protocol": "tcp", "port": "80", "service": "http"},
-        {"protocol": "tcp", "port": "443", "service": "https"}
-    ]
-    
-    test_identity_key = "test_identity_key_12345"
-    test_ip_address = "192.168.1.100"
-    
-    print("Testing save_open_ports_to_db function...")
-    saved_count = save_open_ports_to_db(test_open_ports, test_identity_key, test_ip_address)
-    print(f"Test completed. Saved {saved_count} ports.")
-
-if __name__ == "__main__":
-    main()

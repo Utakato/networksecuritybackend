@@ -1,3 +1,18 @@
+# TODO:
+
+Later - after initial deploys
+-vulnerability script
+
+## Front end:
+
+- for history, we should have the data displayed on a 1 hour basiss - most likely it's the db query we need to change
+
+- have a history of open ports
+
+## NOTES:
+
+vote key is the primary key for the database.
+
 ## DONE:
 
 1. Fetch the data from gossip
@@ -15,20 +30,7 @@
 
 Deploy.
 
-## TODO:
-
-Later - after initial deploys
--vulnerability script
-
-### Python:
-
-### Next.js:
-
 7. API for the data ? Not really -> we could just use the next.js api routes to fetch the data
 
 - We should have 1 api route for /validator details based on pub key
 - We should have 1 api route for validator list which should be paginated and sortable?
-
-## NOTES:
-
-vote key is the primary key for the database.
