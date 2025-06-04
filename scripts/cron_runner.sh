@@ -15,23 +15,29 @@ show_usage() {
     echo "Usage: $0 [SERVICE] [OPTIONS]"
     echo ""
     echo "Services:"
-    echo "  metadata    - Run metadata collection and processing service"
-    echo "  gossip      - Run gossip data collection and processing service"
-    echo "  validators  - Run validators data collection and processing service"
-    echo "  ports       - Run port scanning service"
-    echo "  all         - Run all services sequentially"
+    echo "  metadata      - Run metadata collection and processing service"
+    echo "  gossip        - Run gossip data collection and processing service"
+    echo "  validators    - Run validators data collection and processing service"
+    echo "  ports         - Run port scanning service"
+    echo "  vulnerability - Run vulnerability scanning service"
+    echo "  all           - Run all services sequentially"
     echo ""
     echo "Options:"
     echo "  --help, -h  - Show this help message"
     echo "  --version   - Show version information"
     echo ""
     echo "Environment Variables:"
-    echo "  THREADS     - Number of threads for port scanning (default: 100)"
-    echo "  DEBUG       - Enable debug logging (set to 1)"
+    echo "  THREADS       - Number of threads for port/vulnerability scanning (default: 100/10)"
+    echo "  SCAN_TYPE     - Vulnerability scan type: quick, default, comprehensive (default: default)"
+    echo "  LIMIT         - Limit number of IPs to scan for vulnerability service"
+    echo "  VERBOSE       - Enable verbose output for vulnerability service (true/false)"
+    echo "  DEBUG         - Enable debug logging (set to 1)"
     echo ""
     echo "Examples:"
     echo "  $0 metadata                    # Run metadata service"
     echo "  THREADS=50 $0 ports           # Run port scanning with 50 threads"
+    echo "  SCAN_TYPE=quick $0 vulnerability # Run quick vulnerability scan"
+    echo "  VERBOSE=true LIMIT=100 $0 vulnerability # Verbose scan of first 100 IPs"
     echo "  DEBUG=1 $0 gossip             # Run gossip service with debug logging"
 }
 
@@ -71,7 +77,7 @@ run_service() {
 
 # Function to run all services
 run_all_services() {
-    local services=("metadata" "gossip" "validators" "ports")
+    local services=("metadata" "gossip" "validators" "ports" "vulnerability")
     local failed_services=()
     local successful_services=()
     
@@ -151,6 +157,10 @@ case "$SERVICE_NAME" in
         ;;
     ports)
         run_service "ports"
+        exit_code=$?
+        ;;
+    vulnerability)
+        run_service "vulnerability"
         exit_code=$?
         ;;
     all)

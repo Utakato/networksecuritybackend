@@ -13,11 +13,12 @@ show_usage() {
     echo "Usage: $0 [SERVICE] [OPTIONS]"
     echo ""
     echo "Services:"
-    echo "  metadata    - Run metadata service"
-    echo "  gossip      - Run gossip service" 
-    echo "  validators  - Run validators service"
-    echo "  ports       - Run ports scanning service"
-    echo "  all         - Run all services (parallel execution)"
+    echo "  metadata      - Run metadata service"
+    echo "  gossip        - Run gossip service" 
+    echo "  validators    - Run validators service"
+    echo "  ports         - Run ports scanning service"
+    echo "  vulnerability - Run vulnerability scanning service"
+    echo "  all           - Run all services (parallel execution)"
     echo ""
     echo "Options:"
     echo "  --sequential - Run 'all' services sequentially instead of parallel"
@@ -28,6 +29,7 @@ show_usage() {
     echo "Examples:"
     echo "  $0                           # Interactive menu"
     echo "  $0 metadata                  # Run metadata service"
+    echo "  $0 vulnerability             # Run vulnerability scanning service"
     echo "  $0 all                       # Run all services in parallel"
     echo "  $0 all --sequential          # Run all services sequentially"
     echo "  $0 --status                  # Show service status"
@@ -35,7 +37,7 @@ show_usage() {
 
 # Function to check service status
 check_service_status() {
-    local services=("metadata" "gossip" "validators" "ports")
+    local services=("metadata" "gossip" "validators" "ports" "vulnerability")
     
     echo "Service Status:"
     echo "==============="
@@ -53,7 +55,7 @@ check_service_status() {
 
 # Function to stop services
 stop_services() {
-    local services=("metadata" "gossip" "validators" "ports")
+    local services=("metadata" "gossip" "validators" "ports" "vulnerability")
     local stopped_count=0
     
     echo "Stopping services..."
@@ -99,24 +101,26 @@ show_interactive_menu() {
     echo "2) Gossip Service"
     echo "3) Validators Service"
     echo "4) Ports Scanning Service"
-    echo "5) All Services (Parallel)"
-    echo "6) All Services (Sequential)"
-    echo "7) Show Service Status"
-    echo "8) Stop All Services"
-    echo "9) Exit"
+    echo "5) Vulnerability Scanning Service"
+    echo "6) All Services (Parallel)"
+    echo "7) All Services (Sequential)"
+    echo "8) Show Service Status"
+    echo "9) Stop All Services"
+    echo "10) Exit"
     echo ""
-    read -p "Enter your choice (1-9): " choice
+    read -p "Enter your choice (1-10): " choice
     
     case $choice in
         1) run_service_interactive "metadata" ;;
         2) run_service_interactive "gossip" ;;
         3) run_service_interactive "validators" ;;
         4) run_service_interactive "ports" ;;
-        5) run_all_services_parallel ;;
-        6) run_all_services_sequential ;;
-        7) check_service_status ;;
-        8) stop_services ;;
-        9) echo "Goodbye!"; exit 0 ;;
+        5) run_service_interactive "vulnerability" ;;
+        6) run_all_services_parallel ;;
+        7) run_all_services_sequential ;;
+        8) check_service_status ;;
+        9) stop_services ;;
+        10) echo "Goodbye!"; exit 0 ;;
         *) echo "Invalid choice. Please try again."; show_interactive_menu ;;
     esac
 }
@@ -143,7 +147,7 @@ run_service_interactive() {
 
 # Function to run all services in parallel
 run_all_services_parallel() {
-    local services=("metadata" "gossip" "validators" "ports")
+    local services=("metadata" "gossip" "validators" "ports" "vulnerability")
     local pids=()
     
     echo ""
@@ -206,7 +210,7 @@ case "${1:-}" in
         stop_services
         exit 0
         ;;
-    metadata|gossip|validators|ports)
+    metadata|gossip|validators|ports|vulnerability)
         bash "$SCRIPT_DIR/services/$1.sh"
         exit $?
         ;;
@@ -216,7 +220,7 @@ case "${1:-}" in
             exit $?
         else
             # Run in parallel
-            services=("metadata" "gossip" "validators" "ports")
+            services=("metadata" "gossip" "validators" "ports" "vulnerability")
             pids=()
             
             for service in "${services[@]}"; do
