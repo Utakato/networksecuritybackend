@@ -32,7 +32,7 @@ run_ports_service() {
     fi
     
     log_info "Executing: python3 $PROJECT_ROOT/ports_service/main.py --threads=$THREADS"
-    if timeout "$SERVICE_TIMEOUT" python3 "$PROJECT_ROOT/ports_service/main.py" --threads="$THREADS"; then
+    if timeout_cmd "$SERVICE_TIMEOUT" python3 "$PROJECT_ROOT/ports_service/main.py" --threads="$THREADS"; then
         log_info "Ports service completed successfully"
         return 0
     else

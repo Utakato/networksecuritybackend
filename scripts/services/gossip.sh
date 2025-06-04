@@ -25,7 +25,7 @@ run_gossip_service() {
     
     # Fetch gossip data first
     log_info "Step 1: Fetching gossip data..."
-    if ! timeout 300 "$SCRIPT_DIR/../data/fetch_gossip.sh"; then
+    if ! timeout_cmd 300 "$SCRIPT_DIR/../data/fetch_gossip.sh"; then
         log_error "Failed to fetch gossip data"
         return 1
     fi
@@ -38,7 +38,7 @@ run_gossip_service() {
     fi
     
     log_info "Executing: python3 $PROJECT_ROOT/gossip_service/main.py"
-    if timeout "$SERVICE_TIMEOUT" python3 "$PROJECT_ROOT/gossip_service/main.py"; then
+    if timeout_cmd "$SERVICE_TIMEOUT" python3 "$PROJECT_ROOT/gossip_service/main.py"; then
         log_info "Gossip service completed successfully"
         return 0
     else

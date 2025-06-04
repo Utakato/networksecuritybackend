@@ -124,6 +124,22 @@ safe_write() {
     echo "$content" > "$temp_file" && mv "$temp_file" "$target_file"
 }
 
+# Cross-platform timeout function
+timeout_cmd() {
+    local duration="$1"
+    shift
+    
+    # Detect which timeout command to use
+    if command -v timeout &> /dev/null; then
+        timeout "$duration" "$@"
+    elif command -v gtimeout &> /dev/null; then
+        gtimeout "$duration" "$@"
+    else
+        log_warn "No timeout command available, running without timeout"
+        "$@"
+    fi
+}
+
 # JSON validation
 validate_json() {
     local file="$1"

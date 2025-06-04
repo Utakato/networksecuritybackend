@@ -9,7 +9,7 @@ import os
 # Add the current directory to path
 sys.path.append(os.path.dirname(__file__))
 
-from save_validator_info_to_db import main
+from metadata_service.save_metadata_to_db import main
 
 if __name__ == "__main__":
     try:

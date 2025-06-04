@@ -5,21 +5,28 @@
 set -euo pipefail
 
 # Determine project root from script location (works regardless of cwd)
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+SETUP_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export PROJECT_ROOT="$(cd "$SETUP_SCRIPT_DIR/../.." && pwd)"
 
 # Source common utilities
-source "$SCRIPT_DIR/common.sh"
+source "$SETUP_SCRIPT_DIR/common.sh"
 
 # Set up comprehensive PATH for cron compatibility
+# Preserve existing PATH and add standard directories
+ORIGINAL_PATH="${PATH:-}"
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin"
 
-# Add Solana CLI to PATH
+# Add back the original PATH for development environments
+if [ -n "$ORIGINAL_PATH" ]; then
+    export PATH="$PATH:$ORIGINAL_PATH"
+fi
+
+# Add Solana CLI to PATH if not already present
 if [ -d "/root/.local/share/solana/install/active_release/bin" ]; then
     export PATH="/root/.local/share/solana/install/active_release/bin:$PATH"
 fi
 
-# Add local Python paths
+# Add local Python paths if not already present
 export PATH="/usr/bin/python3:$PATH"
 export PATH="/usr/local/bin/python3:$PATH"
 
@@ -102,7 +109,7 @@ setup_signal_handlers() {
 # Export functions for use in other scripts
 export -f log_info log_warn log_error log_debug
 export -f check_dependencies validate_json safe_write
-export -f create_lock remove_lock is_process_running
+export -f create_lock remove_lock is_process_running timeout_cmd
 
 # Run environment validation
 validate_environment

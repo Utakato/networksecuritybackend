@@ -25,7 +25,7 @@ run_metadata_service() {
     
     # Fetch metadata first
     log_info "Step 1: Fetching metadata..."
-    if ! timeout 300 "$SCRIPT_DIR/../data/fetch_metadata.sh"; then
+    if ! timeout_cmd 300 "$SCRIPT_DIR/../data/fetch_metadata.sh"; then
         log_error "Failed to fetch metadata"
         return 1
     fi
@@ -38,7 +38,7 @@ run_metadata_service() {
     fi
     
     log_info "Executing: python3 $PROJECT_ROOT/metadata_service/main.py"
-    if timeout "$SERVICE_TIMEOUT" python3 "$PROJECT_ROOT/metadata_service/main.py"; then
+    if timeout_cmd "$SERVICE_TIMEOUT" python3 "$PROJECT_ROOT/metadata_service/main.py"; then
         log_info "Metadata service completed successfully"
         return 0
     else
