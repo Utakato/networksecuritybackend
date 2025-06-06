@@ -8,7 +8,6 @@ source "$SCRIPT_DIR/../utils/setup_env.sh"
 # Configuration
 OUTPUT_FILE="$PROJECT_ROOT/metadata_service/validator_info.json"
 TEMP_FILE="${OUTPUT_FILE}.tmp"
-BACKUP_FILE="${OUTPUT_FILE}.backup"
 TIMEOUT_DURATION=300  # 5 minutes
 
 # Function to fetch metadata
@@ -31,11 +30,7 @@ fetch_metadata() {
         return 1
     fi
     
-    # Create backup of existing file if it exists
-    if [ -f "$OUTPUT_FILE" ]; then
-        cp "$OUTPUT_FILE" "$BACKUP_FILE"
-        log_info "Created backup: $BACKUP_FILE"
-    fi
+    # Note: No backup created - fail fast if fetch operation fails
     
     # Fetch validator info with timeout
     log_info "Executing: solana validator-info get --output json"
@@ -103,13 +98,6 @@ if fetch_metadata; then
     
     exit 0
 else
-    log_error "Metadata fetch failed"
-    
-    # Restore backup if available and no current file exists
-    if [ ! -f "$OUTPUT_FILE" ] && [ -f "$BACKUP_FILE" ]; then
-        cp "$BACKUP_FILE" "$OUTPUT_FILE"
-        log_info "Restored previous backup file"
-    fi
-    
+    log_error "Metadata fetch failed - no backup restoration, service will use existing data or fail"
     exit 1
 fi 
