@@ -70,12 +70,12 @@ cleanup_old_logs() {
 # Clean up old logs for current service
 cleanup_old_logs "$LOG_DIR" 10
 
-# Initialize logging only if not already set up
-if [ -z "${LOGGING_INITIALIZED:-}" ]; then
-    # Redirect all output to log file and console
+# Initialize logging for the current script
+# Each script should log to its own file, regardless of parent script
+if [ -z "${LOGGING_SETUP_FOR_SCRIPT:-}" ] || [ "${LOGGING_SETUP_FOR_SCRIPT}" != "$SCRIPT_NAME" ]; then
     exec > >(tee -a "$LOG_FILE")
     exec 2>&1
-    export LOGGING_INITIALIZED=1
+    export LOGGING_SETUP_FOR_SCRIPT="$SCRIPT_NAME"
 fi
 
 # Environment validation
