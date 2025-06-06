@@ -29,8 +29,9 @@ def get_all_ip_addresses():
     """
     conn = None
     try:
-        # Connect to the database
-        conn = get_db_connection()
+        # Connect to the database (show connection info once)
+        print("📡 Connecting to database to retrieve IP addresses...")
+        conn = get_db_connection(verbose=True)
         
         with conn.cursor() as cur:
             # Get the most recent entry for each identity_key

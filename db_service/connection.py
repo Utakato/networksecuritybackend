@@ -4,7 +4,7 @@ import dotenv
 
 dotenv.load_dotenv()
 
-def get_db_connection():
+def get_db_connection(verbose=False):
     """
     Create a database connection using environment variables or default values
     """
@@ -17,9 +17,10 @@ def get_db_connection():
         'port': os.getenv('DB_PORT', '5433')
     }
     
-    # Print connection info (remove in production)
-    print(f"Connecting to PostgreSQL at {db_params['host']}:{db_params['port']}")
-    print(f"Database: {db_params['dbname']}, User: {db_params['user']}")
+    # Only print connection info if verbose mode is enabled
+    if verbose:
+        print(f"Connecting to PostgreSQL at {db_params['host']}:{db_params['port']}")
+        print(f"Database: {db_params['dbname']}, User: {db_params['user']}")
     
     try:
         # First try to connect to the specific database

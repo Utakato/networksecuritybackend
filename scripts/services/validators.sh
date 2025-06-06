@@ -8,7 +8,7 @@ source "$SCRIPT_DIR/../utils/setup_env.sh"
 # Configuration
 SERVICE_NAME="validators"
 LOCK_FILE="/tmp/locks/${SERVICE_NAME}_service.lock"
-SERVICE_TIMEOUT=600  # 10 minutes
+SERVICE_TIMEOUT=3600  # 60 minutes
 
 # Set up signal handlers for cleanup
 setup_signal_handlers "$LOCK_FILE"

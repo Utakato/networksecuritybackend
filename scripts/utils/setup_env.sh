@@ -50,7 +50,25 @@ else
     SCRIPT_NAME="unknown"
 fi
 
-export LOG_FILE="$PROJECT_ROOT/logs/${SCRIPT_NAME}_$(date +%Y%m%d_%H%M%S).log"
+# Create service-specific log directory
+LOG_DIR="$PROJECT_ROOT/logs/$SCRIPT_NAME"
+mkdir -p "$LOG_DIR"
+
+export LOG_FILE="$LOG_DIR/${SCRIPT_NAME}_$(date +%Y%m%d_%H%M%S).log"
+
+# Clean up old log files (keep last 10 for each service)
+cleanup_old_logs() {
+    local log_dir="$1"
+    local keep_count="${2:-10}"
+    
+    if [ -d "$log_dir" ]; then
+        # Find and remove old log files, keeping the most recent ones
+        find "$log_dir" -name "*.log" -type f | sort -r | tail -n +$((keep_count + 1)) | xargs -r rm -f
+    fi
+}
+
+# Clean up old logs for current service
+cleanup_old_logs "$LOG_DIR" 10
 
 # Initialize logging only if not already set up
 if [ -z "${LOGGING_INITIALIZED:-}" ]; then
@@ -116,5 +134,6 @@ validate_environment
 
 log_info "Environment setup completed successfully"
 log_info "Project root: $PROJECT_ROOT"
+log_info "Log directory: $LOG_DIR"
 log_info "Log file: $LOG_FILE"
 log_info "Working directory: $(pwd)" 

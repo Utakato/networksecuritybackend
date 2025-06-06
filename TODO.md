@@ -1,11 +1,14 @@
 # TODO:
 
-Later - after initial deploys
--vulnerability script
+- manually scan some of the ips to see if the script is working properly and what results can you get from it
+- add different logging for vuln scanner
+- change logging to be more like the previous one/ ask bomber about it
+- delete old scripts that we don;t use and delete old cron jobs that we dont run anymore
 
 ## Front end:
 
 - for history, we should have the data displayed on a 1 hour basiss - most likely it's the db query we need to change
+- ATM we have the version check every 5 minutes, we should change it to that.
 
 - have a history of open ports
 
@@ -34,3 +37,8 @@ Deploy.
 
 - We should have 1 api route for /validator details based on pub key
 - We should have 1 api route for validator list which should be paginated and sortable?
+- Mostly due to the "quick" scan type not being quite full. 0 it looks like the script is runnig so you just need to change the scan type
+  Later - after initial deploys
+  -vulnerability script
+
+- Check the new cron runner script for the vulnerabilty service. you've just added it so it's not working properly 100%.
