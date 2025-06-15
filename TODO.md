@@ -7,6 +7,15 @@
 
 ## Front end:
 
+- filter validator by s min - stake amount / it should be someewhere around 1000 validators / not 5000 / not 2000.
+  1091 - solana leader-schedule.
+
+- score :
+- 0- 100 : open ports/ vulnerabilities. 100 is all closed - 0 is the worst from the list, everything else is a percentage of the two.
+
+- redesign filters on history.
+
+-
 - for history, we should have the data displayed on a 1 hour basiss - most likely it's the db query we need to change
 - ATM we have the version check every 5 minutes, we should change it to that.
 

@@ -10,14 +10,24 @@ from db_service.connection import get_db_connection
 
 
 GET_ALL_IP_ADDRESSES_QUERY = """
-                SELECT DISTINCT ON (identity_key) 
-                    identity_key, 
-                    ip_address
-                FROM gossip_peers 
-                WHERE ip_address IS NOT NULL 
-                    AND identity_key IS NOT NULL
-                ORDER BY identity_key, timestamp DESC
-            """
+    SELECT DISTINCT ON (g.identity_key)
+        g.identity_key,
+        g.ip_address
+    FROM gossip_peers g
+    JOIN (
+        SELECT vs1.identity_key, vs1.activated _stake
+        FROM validators_state vs1
+        INNER JOIN (
+            SELECT identity_key, MAX(timestamp) AS max_timestamp
+            FROM validators_state
+            GROUP BY identity_key
+        ) vs2 ON vs1.identity_key = vs2.identity_key AND vs1.timestamp = vs2.max_timestamp
+    ) v ON g.identity_key = v.identity_key
+    WHERE g.ip_address IS NOT NULL
+      AND g.identity_key IS NOT NULL
+      AND v.activated_stake >= 10000 * 1e9
+    ORDER BY g.identity_key, g.timestamp DESC
+"""
 
 def get_all_ip_addresses():
     """
