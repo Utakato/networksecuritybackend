@@ -15,7 +15,7 @@ GET_ALL_IP_ADDRESSES_QUERY = """
         g.ip_address
     FROM gossip_peers g
     JOIN (
-        SELECT vs1.identity_key, vs1.activated _stake
+        SELECT vs1.identity_key, vs1.activated_stake
         FROM validators_state vs1
         INNER JOIN (
             SELECT identity_key, MAX(timestamp) AS max_timestamp
