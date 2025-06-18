@@ -7,10 +7,10 @@ services:
       - "5433:5432"
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: ckigZDyic2PqXLcSyFlnOuBusvuwctRReXzxZrZd07Rcz14hDD
       POSTGRES_DB: validator_timescale
     volumes:
-      - timescale-data:/var/lib/postgresql/data
+      - postgres-data:/home/postgres/pgdata/data
 
 volumes:
-  timescale-data:
+  postgres-data:
