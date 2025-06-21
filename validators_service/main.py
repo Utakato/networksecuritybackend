@@ -10,7 +10,7 @@ from validators_service.save_validators_to_db import main as save_to_db
 
 def main():
 
-    # get the path to the validators data file
+    # get the path to the validatorsa data file
     file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'validators_data.json')
     
     # save the validators data to the database
