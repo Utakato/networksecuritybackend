@@ -15,6 +15,7 @@ def print_startup_banner(max_workers, scan_type="scan", service_name=None):
     type_mapping = {
         "port": {"emoji": "🔍", "name": "Port Scanner"},
         "vulnerability": {"emoji": "🛡️", "name": "Vulnerability Scanner"},
+        "score": {"emoji": "🔐", "name": "Security Score Calculator"},
         "scan": {"emoji": "🚀", "name": "Scanner"}
     }
     
@@ -31,6 +32,8 @@ def print_startup_banner(max_workers, scan_type="scan", service_name=None):
         print("🎯 Scan mode: Vulnerability detection using nmap scripts")
     elif scan_type == "port":
         print("🎯 Scan mode: Port detection")
+    elif scan_type == "score":
+        print("🎯 Calculation mode: Security score based on ports & vulnerabilities")
     else:
         print(f"🎯 Scan mode: {scan_type}")
     
@@ -88,6 +91,7 @@ def estimate_completion_time(total_ips, max_workers, scan_type="scan"):
     avg_times = {
         "port": 15,  # seconds per IP
         "vulnerability": 45,  # vulnerability scans take longer
+        "score": 2,  # score calculation is much faster
         "scan": 20  # default
     }
     
@@ -134,6 +138,7 @@ def print_progress_update(completed, total, start_time, scan_type="scan", interv
         type_mapping = {
             "port": {"emoji": "🔍", "action": "scanned"},
             "vulnerability": {"emoji": "🛡️", "action": "analyzed"},
+            "score": {"emoji": "🔐", "action": "calculated"},
             "scan": {"emoji": "🚀", "action": "processed"}
         }
         
@@ -180,6 +185,7 @@ def print_scan_summary(completed_scans, failed_scans, total_items_saved,
     type_mapping = {
         "port": {"emoji": "🔍", "item": "ports"},
         "vulnerability": {"emoji": "🛡️", "item": "vulnerabilities"},
+        "score": {"emoji": "🔐", "item": "scores"},
         "scan": {"emoji": "🚀", "item": "items"}
     }
     
