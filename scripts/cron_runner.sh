@@ -15,12 +15,13 @@ show_usage() {
     echo "Usage: $0 [SERVICE] [OPTIONS]"
     echo ""
     echo "Services:"
-    echo "  metadata      - Run metadata collection and processing service"
-    echo "  gossip        - Run gossip data collection and processing service"
-    echo "  validators    - Run validators data collection and processing service"
-    echo "  ports         - Run port scanning service"
-    echo "  vulnerability - Run vulnerability scanning service"
-    echo "  all           - Run all services sequentially"
+    echo "  metadata         - Run metadata collection and processing service"
+    echo "  gossip           - Run gossip data collection and processing service"
+    echo "  validators       - Run validators data collection and processing service"
+    echo "  ports            - Run port scanning service"
+    echo "  vulnerability    - Run vulnerability scanning service"
+    echo "  vulnerability_score - Run vulnerability score calculation service"
+    echo "  all              - Run all services sequentially"
     echo ""
     echo "Options:"
     echo "  --help, -h  - Show this help message"
@@ -29,8 +30,9 @@ show_usage() {
     echo "Environment Variables:"
     echo "  THREADS       - Number of threads for port/vulnerability scanning (default: 100/10)"
     echo "  SCAN_TYPE     - Vulnerability scan type: quick, default, comprehensive (default: default)"
-    echo "  LIMIT         - Limit number of IPs to scan for vulnerability service"
-    echo "  VERBOSE       - Enable verbose output for vulnerability service (true/false)"
+    echo "  LIMIT         - Limit number of IPs to scan for vulnerability/score services"
+    echo "  VERBOSE       - Enable verbose output for vulnerability/score services (true/false)"
+    echo "  CLEAN_OLD     - Clean old entries before inserting new ones for score service (true/false)"
     echo "  DEBUG         - Enable debug logging (set to 1)"
     echo ""
     echo "Logging:"
@@ -43,6 +45,7 @@ show_usage() {
     echo "  THREADS=50 $0 ports           # Run port scanning with 50 threads"
     echo "  SCAN_TYPE=quick $0 vulnerability # Run quick vulnerability scan"
     echo "  VERBOSE=true LIMIT=100 $0 vulnerability # Verbose scan of first 100 IPs"
+    echo "  VERBOSE=true $0 vulnerability_score # Run score calculation with verbose output"
     echo "  DEBUG=1 $0 gossip             # Run gossip service with debug logging"
 }
 
@@ -82,7 +85,7 @@ run_service() {
 
 # Function to run all services
 run_all_services() {
-    local services=("metadata" "gossip" "validators" "ports" "vulnerability")
+    local services=("metadata" "gossip" "validators" "ports" "vulnerability" "vulnerability_score")
     local failed_services=()
     local successful_services=()
     
@@ -167,6 +170,10 @@ case "$SERVICE_NAME" in
         ;;
     vulnerability)
         run_service "vulnerability"
+        exit_code=$?
+        ;;
+    vulnerability_score)
+        run_service "vulnerability_score"
         exit_code=$?
         ;;
     all)
